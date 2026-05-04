@@ -33,6 +33,10 @@ Nodo * CrearListaVacia();
 //Funcion para cargar una tarea (se agrega al final de la lista)
 Nodo * CargarTarea(Nodo * L, int id);
 
+//Funcion para imprimir los nodos de las listas
+void MostrarLista(Nodo * L);
+
+
 //____________________________________
 //FUNCION MAIN
 //____________________________________
@@ -61,8 +65,11 @@ int main()
         default:
             break;
         }
-        
+
     } while (confirmarCargaDeTarea != 0);
+
+    MostrarLista(TareasPendientes);
+
     return 0;
 }
 
@@ -107,4 +114,24 @@ Nodo * CargarTarea(Nodo * L, int id)
     }
 
     return L;
+}
+
+//Funcion para imprimir los nodos de las listas
+void MostrarLista(Nodo * L)
+{
+    if (L == NULL)
+    {
+        printf("\nNo hay tareas para mostrar.\n");
+    } else {
+        Nodo * Aux = L;
+        do
+        {
+            printf("\nDescripcion de la tarea: %s\n", Aux->T.Descripcion);
+            printf("ID de la tarea: %d\n", Aux->T.TareaID);
+            printf("Duracion de la tarea: %d\n", Aux->T.Duracion);
+            printf("-------------------\n");
+
+            Aux = Aux->Siguiente;
+        } while (Aux->Siguiente != NULL);
+    }
 }
