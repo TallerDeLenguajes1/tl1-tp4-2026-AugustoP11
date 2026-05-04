@@ -36,6 +36,9 @@ Nodo * CargarTarea(Nodo * L, int id);
 //Funcion para imprimir los nodos de las listas
 void MostrarLista(Nodo * L);
 
+//Funcion para transferir tareas pendientes a tareas realizadas
+void TransferirPendientesARealizadas(Nodo ** Pendientes, Nodo ** Realizadas);
+
 
 //____________________________________
 //FUNCION MAIN
@@ -68,7 +71,37 @@ int main()
 
     } while (confirmarCargaDeTarea != 0);
 
-    MostrarLista(TareasPendientes);
+    //Muestro la lista
+    //MostrarLista(TareasPendientes);
+
+    //Interfaz para mostrar tareas y para transferir tareas pendientes a la lista de tareas realizadas
+    int confirmarOpcion = 10;
+
+    do
+    {
+        printf("\nIngrese '1' para mostrar la lista de tareas pendientes\nIngrese '2' para mostrar la lista de las tareas realizadas\nIngrese '3' para ingresar el id de una tarea pendiente que se haya completado\nIngrese '0' para salir");
+        scanf("%d", &confirmarOpcion);
+        switch (confirmarOpcion)
+        {
+        case 1:
+            printf("\n------TAREAS PENDIENTES------");
+            MostrarLista(TareasPendientes);
+            break;
+        
+        case 2:
+            printf("\n------TAREAS REALIZADAS------");
+            MostrarLista(TareasRealizadas);
+            break;
+
+        case 3:
+            TransferirPendientesARealizadas(&TareasPendientes, &TareasRealizadas);
+            break;
+
+        default:
+            break;
+        }
+    } while (confirmarOpcion != 0);
+    
 
     return 0;
 }
@@ -132,6 +165,38 @@ void MostrarLista(Nodo * L)
             printf("-------------------\n");
 
             Aux = Aux->Siguiente;
-        } while (Aux->Siguiente != NULL);
+        } while (Aux != NULL);
+    }
+}
+
+//Funcion para transferir tareas pendientes a tareas realizadas
+void TransferirPendientesARealizadas(Nodo ** Pendientes, Nodo ** Realizadas)
+{
+    int id;
+    printf("\nIngrese el ID de la tarea a marcar como completada: ");
+    scanf("%d", &id);
+    fflush(stdin);
+
+    Nodo * Aux = (*Pendientes);
+    Nodo * AuxAnt = NULL;
+    while (Aux != NULL && Aux->T.TareaID != id)
+    {
+        AuxAnt = Aux;
+        Aux = Aux->Siguiente;
+    }
+    //Si es que encontro el id, muevo la tarea de pendientes a realizadas, si no no hago nada
+    if (Aux != NULL)
+    {
+        if (Aux == (*Pendientes))
+        {
+            (*Pendientes) = Aux->Siguiente;
+        } else {
+            AuxAnt->Siguiente = Aux->Siguiente;
+        }
+        Aux->Siguiente = NULL;
+        
+        //Agrego la tarea al comienzo de la lista de tareas realizadas
+        Aux->Siguiente = (*Realizadas);
+        (*Realizadas) = Aux;
     }
 }
