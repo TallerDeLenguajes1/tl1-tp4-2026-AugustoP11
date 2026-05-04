@@ -39,6 +39,9 @@ void MostrarLista(Nodo * L);
 //Funcion para transferir tareas pendientes a tareas realizadas
 void TransferirPendientesARealizadas(Nodo ** Pendientes, Nodo ** Realizadas);
 
+//Funcion para consultar tareas por id o palabra clave
+void consultarTareas(Nodo * Pendientes, Nodo * Realizadas);
+
 
 //____________________________________
 //FUNCION MAIN
@@ -79,24 +82,30 @@ int main()
 
     do
     {
-        printf("\nIngrese '1' para mostrar la lista de tareas pendientes\nIngrese '2' para mostrar la lista de las tareas realizadas\nIngrese '3' para ingresar el id de una tarea pendiente que se haya completado\nIngrese '0' para salir");
+        printf("\nIngrese '1' para mostrar la lista de tareas pendientes\nIngrese '2' para mostrar la lista de las tareas realizadas\nIngrese '3' para ingresar el id de una tarea pendiente que se haya completado\nIngrese '4' para consultar tareas\nIngrese '0' para salir\n");
         scanf("%d", &confirmarOpcion);
         switch (confirmarOpcion)
         {
+        //Opcion para mostrar la lista de tareas pendientes
         case 1:
             printf("\n------TAREAS PENDIENTES------");
             MostrarLista(TareasPendientes);
             break;
         
+        //Opcion para mostrar la lista de tareas realizadas
         case 2:
             printf("\n------TAREAS REALIZADAS------");
             MostrarLista(TareasRealizadas);
             break;
 
+        //Opcion para marcar por id como completadas tareas pendientes
         case 3:
             TransferirPendientesARealizadas(&TareasPendientes, &TareasRealizadas);
             break;
 
+        case 4:
+            consultarTareas(TareasPendientes, TareasRealizadas);
+            break;
         default:
             break;
         }
@@ -198,5 +207,124 @@ void TransferirPendientesARealizadas(Nodo ** Pendientes, Nodo ** Realizadas)
         //Agrego la tarea al comienzo de la lista de tareas realizadas
         Aux->Siguiente = (*Realizadas);
         (*Realizadas) = Aux;
+    }
+}
+
+//Funcion para consultar tareas por id o palabra clave
+void consultarTareas(Nodo * Pendientes, Nodo * Realizadas)
+{
+    int opcion = 10;
+    printf("\n\nIngrese '5' para consultar tarea por ID\nIngrese '6' para consultar tarea por palabra clave\n");
+    scanf("%d", &opcion);
+    fflush(stdin);
+    int idConsultado = 999;
+    char Buff[100];
+    Nodo * AuxPendientes = Pendientes;
+    Nodo * AuxRealizadas = Realizadas;
+    int flag = 0;
+
+    switch (opcion)
+    {
+    //Consulta de tarea por id
+    case 5:
+        printf("\nIngrese el id de la tarea a consultar: ");
+        scanf("%d", &idConsultado);
+
+        while (AuxPendientes != NULL)
+        {
+            if (AuxPendientes->T.TareaID == idConsultado)
+            {
+                printf("\n-----------TAREA ENCONTRADA-----------");
+                printf("\nDescripcion de la tarea: %s\n", AuxPendientes->T.Descripcion);
+                printf("ID de la tarea: %d\n", AuxPendientes->T.TareaID);
+                printf("Duracion de la tarea: %d\n", AuxPendientes->T.Duracion);
+                printf("ESTADO: PENDIENTE\n");
+                printf("---------------------------------------\n");
+                flag = 1;
+                break;
+            }
+            AuxPendientes = AuxPendientes->Siguiente;
+        }
+
+        //Si no encontro la tarea en la lista de tareas pendientes busco en la lista de tareas realizadas
+        if (flag != 1)
+        {
+            while (AuxRealizadas != NULL)
+            {
+            if (AuxRealizadas->T.TareaID == idConsultado)
+            {
+                printf("\n-----------TAREA ENCONTRADA-----------");
+                printf("\nDescripcion de la tarea: %s\n", AuxRealizadas->T.Descripcion);
+                printf("ID de la tarea: %d\n", AuxRealizadas->T.TareaID);
+                printf("Duracion de la tarea: %d\n", AuxRealizadas->T.Duracion);
+                printf("ESTADO: REALIZADA\n");
+                printf("---------------------------------------\n");
+                flag = 1;
+                break;
+            }
+            AuxRealizadas = AuxRealizadas->Siguiente;
+            }
+        }
+        
+        //Si no se encuentra la tarea lo indico
+        if (flag != 1)
+        {
+            printf("\nNo se encontro la tarea con ID: %d\n", idConsultado);
+        }
+        break;
+    
+    //Consulta de tarea por palabra clave
+    case 6:
+        printf("\nIngrese una palabra clave para consultar en tareas: ");
+        gets(Buff);
+        char * coincidencia;
+
+        //Busco primero en la lista de tareas pendientes
+        while (AuxPendientes != NULL)
+        {
+            coincidencia = strstr(AuxPendientes->T.Descripcion, Buff);
+            if (coincidencia != NULL)
+            {
+                printf("\n-----------TAREA ENCONTRADA-----------");
+                printf("\nDescripcion de la tarea: %s\n", AuxPendientes->T.Descripcion);
+                printf("ID de la tarea: %d\n", AuxPendientes->T.TareaID);
+                printf("Duracion de la tarea: %d\n", AuxPendientes->T.Duracion);
+                printf("ESTADO: PENDIENTE\n");
+                printf("---------------------------------------\n");
+                flag = 1;
+                break;
+            }
+            coincidencia = NULL;
+            AuxPendientes = AuxPendientes->Siguiente;
+        }
+        
+        //Busco en la lista de tareas realizadas
+        while (AuxRealizadas != NULL)
+        {
+            coincidencia = strstr(AuxRealizadas->T.Descripcion, Buff);
+            if (coincidencia != NULL)
+            {
+                printf("\n-----------TAREA ENCONTRADA-----------");
+                printf("\nDescripcion de la tarea: %s\n", AuxRealizadas->T.Descripcion);
+                printf("ID de la tarea: %d\n", AuxRealizadas->T.TareaID);
+                printf("Duracion de la tarea: %d\n", AuxRealizadas->T.Duracion);
+                printf("ESTADO: REALIZADA\n");
+                printf("---------------------------------------\n");
+                flag = 1;
+                break;
+            }
+            coincidencia = NULL;
+            AuxRealizadas = AuxRealizadas->Siguiente;
+        }
+
+        //Si no se encuentra la tarea lo indico
+        if (flag != 1)
+        {
+            printf("\nNo se encontro la tarea con la palabra clave: %s\n", Buff);
+        }
+        break;
+
+    default:
+        break;
     }
 }
