@@ -111,6 +111,29 @@ int main()
         }
     } while (confirmarOpcion != 0);
     
+    //____________Libero memoria____________
+    Nodo * AuxPendientes = TareasPendientes;
+    Nodo * AuxRealizadas = TareasRealizadas;
+
+    //Libero memoria de la lista TareasPendientes
+    while (AuxPendientes != NULL)
+    {
+        free(AuxPendientes->T.Descripcion);
+        AuxPendientes->T.Descripcion = NULL;
+        AuxPendientes = AuxPendientes->Siguiente;
+    }
+    free(TareasPendientes);
+    TareasPendientes = NULL;
+
+    //Libero memoria de la lista TareasRealizadas
+    while (AuxRealizadas != NULL)
+    {
+        free(AuxRealizadas->T.Descripcion);
+        AuxRealizadas->T.Descripcion = NULL;
+        AuxRealizadas = AuxRealizadas->Siguiente;
+    }
+    free(TareasRealizadas);
+    TareasRealizadas = NULL;
 
     return 0;
 }
